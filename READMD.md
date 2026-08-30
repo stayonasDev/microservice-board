@@ -18,7 +18,8 @@ $ docker exec -it [컨테이너 이름] myslq -uroot -p[설정한 비밀번호
 ```
 
 
-## Article SQL Tuning
+## Article SQL
+### 페이징
 ```bash
 # 현재 더미 데이터 삽입으로 약 1천 200만건 게시물이 있다. (테스트 로직 실행)
 # article의 resources/db/ddl.sql 적용 편리하게 적용하려면 docker compose로 실행 시 자동 삽입 및 JPA ddl-auto: create 가능
@@ -64,4 +65,14 @@ mysql> select * from(
 # (((7 - 1) / 10) + 1) * 30 * 10 + 1 = 301
 # 커버링 인덱스 사용, count query는 limit 불가
 mysql> select count(*) from (select article_id from article where board_id = 1 limit 300301) t;
+```
+
+### 무한 스크롤
+```bash
+# 무한 스크롤은 번호 방식의 페이징을 사용하면 중복/누락 문제 발생
+# 조회한 마지막 행의 id를 사용
+mysql> select * from article where board_id = 1 order by article_id desc limit 30;
+
+# 마지막 행의 id를 사용해서 쿼리 -> offset과 달리 아무리 뒷 페이지로 가도 균등한 속도 보장, 인덱스 사용
+mysql> select * from article where board_id = 1 and article_id < 352018473706639590 order by article_id desc limit 30;
 ```
