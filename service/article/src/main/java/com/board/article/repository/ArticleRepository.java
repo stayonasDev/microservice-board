@@ -39,7 +39,7 @@ public interface ArticleRepository extends CrudRepository<Article, Long> {
     Long count(@Param("boardId") Long boardId, @Param("limit") Long limit);
 
     @Query(
-            value ="select article.article_id, article.content, article.board_id, article.writer_id, " +
+            value ="select article.article_id, article_title, article.content, article.board_id, article.writer_id, " +
                     "article.created_at, article.modified_at " +
                     "from article " +
                     "where board_id = :boardId " +
@@ -52,7 +52,7 @@ public interface ArticleRepository extends CrudRepository<Article, Long> {
             value ="select article.article_id, article.content, article.board_id, article.writer_id, " +
                     "article.created_at, article.modified_at " +
                     "from article " +
-                    "where board_id = :boardId and article_id < :lastArticleId" +
+                    "where board_id = :boardId and article_id < :lastArticleId " +
                     "order by article_id desc limit :limit ",
             nativeQuery = true
     )
